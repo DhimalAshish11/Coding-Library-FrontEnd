@@ -146,3 +146,20 @@ export const postBurrow = async (obj) => {
     };
   }
 };
+
+export const returnBurrow = async (obj) => {
+  try {
+    const { data } = await axios.put(burrowAPI, obj, {
+      headers: {
+        Authorization: getUserIdFromLocalStorage(),
+      },
+    });
+
+    return data;
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message,
+    };
+  }
+};

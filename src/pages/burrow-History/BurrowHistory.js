@@ -3,14 +3,25 @@ import { UserLayout } from "../../components/layout/UserLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { fetchBurrowAction } from "./burrowAction";
+import { fetchBurrowAction, returnBurrowAction } from "./burrowAction";
 
 const BurrowHistory = () => {
   const dispatch = useDispatch();
+
   const { burrows } = useSelector((state) => state.burrowInfo);
+  const { user } = useSelector((state) => state.userInfo);
   useEffect(() => {
     dispatch(fetchBurrowAction());
   }, [dispatch]);
+
+  const handleOnReturn = ({ bookId, _id }) => {
+    if (window.confirm("Are you sure you want to return this book?")) {
+      const obj = { bookId, burrowId: _id };
+
+      dispatch(returnBurrowAction(obj));
+    }
+  };
+
   return (
     <UserLayout title="BurrowHistory">
       <Table striped bordered hover>
@@ -20,7 +31,7 @@ const BurrowHistory = () => {
             <th>thumbnail</th>
             <th>Book Title</th>
             <th>Student Name</th>
-            <th>Borrow Date</th>
+            <th>Return Date</th>
 
             <th>Return Now</th>
           </tr>
@@ -34,11 +45,13 @@ const BurrowHistory = () => {
               </td>
               <td>{item.bookName}</td>
               <td>{item.userName}</td>
-              <td>{item.dueDate.slice(0, 10)}</td>
+              <td>{item.dueDate?.slice(0, 10)}</td>
               <td>
-                <Link to={`/book/edit/${item._id}`}>
-                  <Button variant="warning">Return</Button>
-                </Link>
+                {item.userId === user._id && !item.isRetured ? (
+                  <Button onClick={() => handleOnReturn(item)}>Return</Button>
+                ) : (
+                  <Button variant="success">Leave review</Button>
+                )}
               </td>
             </tr>
           ))}
