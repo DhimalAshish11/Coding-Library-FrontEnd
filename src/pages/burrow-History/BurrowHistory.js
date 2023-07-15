@@ -1,12 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { UserLayout } from "../../components/layout/UserLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { fetchBurrowAction, returnBurrowAction } from "./burrowAction";
+import { ReviewForm } from "../../components/review/ReviewForm";
+import { setModalShow } from "../../system/systemSlice";
+import { CustomModal } from "../../components/modal/CustomModal";
 
 const BurrowHistory = () => {
   const dispatch = useDispatch();
+
+  const [selectedReview, setSelectedReview] = useState({});
 
   const { burrows } = useSelector((state) => state.burrowInfo);
   const { user } = useSelector((state) => state.userInfo);
@@ -22,8 +26,20 @@ const BurrowHistory = () => {
     }
   };
 
+  const handleOnReview = (burrowBook) => {
+    setSelectedReview(burrowBook);
+    dispatch(setModalShow(true));
+  };
+
   return (
     <UserLayout title="BurrowHistory">
+      {selectedReview?._id && (
+        <CustomModal
+          modalTitle={`Leave your review for ${selectedReview.bookName}`}
+        >
+          <ReviewForm selectedReview={selectedReview} />
+        </CustomModal>
+      )}
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -50,7 +66,12 @@ const BurrowHistory = () => {
                 {item.userId === user._id && !item.isRetured ? (
                   <Button onClick={() => handleOnReturn(item)}>Return</Button>
                 ) : (
-                  <Button variant="success">Leave review</Button>
+                  <Button
+                    variant="success"
+                    onClick={() => handleOnReview(item)}
+                  >
+                    Leave review
+                  </Button>
                 )}
               </td>
             </tr>

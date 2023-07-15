@@ -4,6 +4,7 @@ const rootAPI = "http://localhost:8000";
 const userAPI = rootAPI + "/api/v1/user";
 const bookAPI = rootAPI + "/api/v1/book";
 const burrowAPI = rootAPI + "/api/v1/burrow";
+const reviewAPI = rootAPI + "/api/v1/review";
 
 const getUserIdFromLocalStorage = () => {
   const str = localStorage.getItem("persist:userInfo");
@@ -150,6 +151,25 @@ export const postBurrow = async (obj) => {
 export const returnBurrow = async (obj) => {
   try {
     const { data } = await axios.put(burrowAPI, obj, {
+      headers: {
+        Authorization: getUserIdFromLocalStorage(),
+      },
+    });
+
+    return data;
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message,
+    };
+  }
+};
+
+//review
+
+export const postReview = async (obj) => {
+  try {
+    const { data } = await axios.post(reviewAPI, obj, {
       headers: {
         Authorization: getUserIdFromLocalStorage(),
       },
