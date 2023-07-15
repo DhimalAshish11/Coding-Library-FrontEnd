@@ -3,8 +3,10 @@ import { CustomInput } from "../custom-input/CustomInput";
 import { Button, Form } from "react-bootstrap";
 import { AiFillStar } from "react-icons/ai";
 import { postReviewAction } from "../../pages/review/reviewAction";
+import { useDispatch } from "react-redux";
 
 export const ReviewForm = ({ selectedReview }) => {
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
     status: "inactive",
     star: 5,
@@ -33,7 +35,7 @@ export const ReviewForm = ({ selectedReview }) => {
       ...form,
     };
 
-    postReviewAction(obj);
+    dispatch(postReviewAction(obj));
   };
   return (
     <div>
